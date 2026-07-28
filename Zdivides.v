@@ -86,7 +86,6 @@ try (rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith).
 try (rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith).
 rewrite Zabs_Zopp.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
-rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
 intros n' Hn'; case m; simpl in |- *; auto.
 exists 0%Z; repeat split; simpl in |- *; auto with zarith.
 intros m'; generalize (Pdiv_correct m' n'); case (Pdiv m' n'); simpl in |- *;
@@ -98,14 +97,14 @@ rewrite H1.
 rewrite inj_plus; rewrite inj_mult.
 rewrite <- (inject_nat_convert (Zpos n') n'); auto.
 repeat rewrite inj_oZ1; auto with zarith.
-ring.
+try ring.
 replace (Zneg n') with (- Zpos n')%Z; [ idtac | simpl in |- *; auto ].
 rewrite Zmult_opp_opp.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
-rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
-rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith.
+try (rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith).
+try (rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith).
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
-rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
+try (rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith).
 intros m'; generalize (Pdiv_correct m' n'); case (Pdiv m' n'); simpl in |- *;
  auto.
 intros q r (H1, H2); exists (- oZ1 r)%Z; repeat (split; auto with zarith).
@@ -116,15 +115,14 @@ rewrite H1.
 rewrite inj_plus; rewrite inj_mult.
 rewrite <- (inject_nat_convert (Zpos n') n'); auto.
 repeat rewrite inj_oZ1; auto with zarith.
-ring.
+try ring.
 replace (Zneg n') with (- Zpos n')%Z; [ idtac | simpl in |- *; auto ].
 rewrite <- Zopp_mult_distr_r; rewrite Zabs_Zopp.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
-rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith.
-rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
+try (rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith).
+try (rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith).
 rewrite Zabs_Zopp.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
-rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
 Qed.
  
 Theorem ZquotientPos :
@@ -164,10 +162,6 @@ Contradict Hz4.
 replace (Zabs m) with (1 * Zabs m)%Z; [ idtac | ring ].
 apply Zle_not_lt; rewrite H2.
 rewrite Zabs_Zmult; apply Zle_Zmult_comp_r; auto with zarith.
-generalize H3; case (z1 - Zquotient n m)%Z;
- try (intros H1; case H1; auto; fail); simpl in |- *; 
- intros p; case p; simpl in |- *; auto; intros; red in |- *; 
- simpl in |- *; auto; red in |- *; intros; discriminate.
 rewrite Zmult_minus_distr_r; rewrite (Zmult_comm z1); rewrite <- Hz1;
  (pattern n at 1 in |- *; rewrite Hz2); ring.
 Qed.
@@ -289,14 +283,13 @@ intros H;
 cut (Zabs (Zquotient m n) < 1)%Z.
 case (Zquotient m n); simpl in |- *; auto; intros p; case p;
  unfold Zlt in |- *; simpl in |- *; intros; discriminate.
-apply Zlt_mult_simpl_l with (c := Zabs n); auto with zarith.
-case (Zle_lt_or_eq 0 (Zabs n)); auto with zarith.
-intros H3; case H'; auto.
-generalize H3; case n; simpl in |- *; auto; intros; discriminate.
+apply Zlt_mult_simpl_l with (c := Zabs n).
+exact (proj2 (Z.abs_pos n) H').
 rewrite <- Zabs_Zmult; rewrite (Zmult_comm n).
 replace (Zabs n * 1)%Z with (Zabs n); [ idtac | ring ].
 apply Zle_lt_trans with (1 := H1).
-apply Zlt_mult_simpl_l with (c := (1 + 1)%Z); auto with zarith.
+apply Zlt_mult_simpl_l with (c := (1 + 1)%Z).
+lia.
 replace ((1 + 1) * Zabs m)%Z with (Zabs (m + m)).
 replace ((1 + 1) * Zabs n)%Z with (Zabs n + Zabs n)%Z; [ idtac | ring ].
 pattern m at 1 in |- *; rewrite H'0; rewrite H0; rewrite H.
@@ -304,7 +297,6 @@ replace (- Zquotient m n * n + r + (Zquotient m n * n + z))%Z with (r + z)%Z;
  [ idtac | ring ].
 apply Zle_lt_trans with (Zabs r + Zabs z)%Z; auto with zarith.
 rewrite <- (Zabs_eq (1 + 1)); auto with zarith.
-rewrite <- Zabs_Zmult; apply f_equal with (f := Zabs); auto with zarith.
 Contradict H'1; apply Zlt_not_le.
 pattern m at 1 in |- *; rewrite H0.
 apply Zle_lt_trans with (Zabs (Zquotient m n * n) + Zabs z)%Z;
@@ -351,10 +343,7 @@ repeat rewrite Zabs_Zmult.
 replace (Zabs (Zquotient m q) * Zabs q + Zabs q)%Z with
  (Zsucc (Zabs (Zquotient m q)) * Zabs q)%Z;
  [ idtac | unfold Zsucc in |- *; ring ].
-cut (0 < Zabs q)%Z; auto with zarith.
-case (Zle_lt_or_eq 0 (Zabs q)); auto with zarith.
-intros H'6; case Z1; auto.
-generalize H'6; case q; simpl in |- *; auto; intros; discriminate.
+pose proof (proj2 (Z.abs_pos q) Z1); auto with zarith.
 case (Zabs_eq_case _ _ Z0); intros Z1; rewrite Z1; auto with zarith.
 rewrite ZquotientZopp; rewrite Zabs_Zopp; auto with zarith.
 Qed.
@@ -373,11 +362,6 @@ pattern (Zpower_nat r (digit r v)) at 1 in |- *;
  replace (Zpower_nat r (digit r v)) with (Zpower_nat r (digit r v) * 1)%Z;
  [ idtac | ring ].
 rewrite (fun x y => Zabs_eq (Zpower_nat x y)); auto with zarith.
-apply Zle_Zmult_comp_l; auto with zarith.
-generalize Z1; case q; simpl in |- *; try (intros H1; case H1; auto; fail);
- intros p;
- (case p; unfold Zle in |- *; simpl in |- *; intros; red in |- *; intros;
-   discriminate).
 Qed.
  
 Theorem ZDividesLe :
@@ -399,17 +383,17 @@ intros m n p Z1; case (Z_eq_dec n 0); intros Z2.
 rewrite Z2; unfold Zquotient in |- *; case (m * p)%Z; case m; simpl in |- *;
  auto.
 case (ZquotientProp m n); auto; intros r (H1, (H2, H3)).
-apply sym_equal; apply ZquotientUnique with (r := (r * p)%Z);
- auto with zarith.
+apply sym_equal; apply ZquotientUnique with (r := (r * p)%Z).
+intros E; apply Z.mul_eq_0 in E; destruct E; contradiction.
 pattern m at 1 in |- *; rewrite H1; ring.
+repeat rewrite Zabs_Zmult.
 rewrite Zmult_assoc.
-repeat rewrite (fun x => Zabs_Zmult x p); auto with zarith.
-repeat rewrite Zabs_Zmult; auto with zarith.
-apply Zmult_gt_0_lt_compat_r; auto with zarith.
-apply Zlt_gt; generalize Z1; case p; simpl in |- *;
- try (intros H4; case H4; auto; fail); unfold Zlt in |- *; 
- simpl in |- *; auto; intros; red in |- *; intros; 
- discriminate.
+apply Z.mul_le_mono_nonneg_r.
+apply Z.abs_nonneg.
+rewrite <- Zabs_Zmult; exact H2.
+repeat rewrite Zabs_Zmult.
+pose proof (proj2 (Z.abs_pos p) Z1).
+nia.
 Qed.
  
 Theorem ZDivides_add :

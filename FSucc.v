@@ -396,14 +396,12 @@ unfold pPred in |- *; apply Zle_Zpred; auto with float zarith.
 intros H'2; repeat split; simpl in |- *; auto with float zarith arith.
 apply Zlt_trans with (Zabs (Fnum a)); auto with float zarith.
 repeat rewrite Zabs_eq_opp; auto with float zarith.
-rewrite Zabs_Zmult.
-rewrite (Zabs_eq radix);
- [ idtac | apply Zle_trans with 1%Z; auto with zarith ].
-repeat rewrite Zabs_eq_opp; auto with float zarith.
 pattern (Zpos (vNum b)) at 1 in |- *;
  rewrite (PosNormMin radix) with (precision := precision); 
  auto with zarith.
-apply Zle_Zmult_comp_l; auto with zarith.
+replace (- (radix * Zsucc (Fnum a)))%Z
+  with (radix * (- Zsucc (Fnum a)))%Z by ring.
+apply Z.mul_le_mono_nonneg_l; auto with zarith.
 replace (- Zsucc (Fnum a))%Z with (Zpred (- Fnum a)).
 auto with float zarith.
 unfold pPred in |- *; apply Zle_Zpred.
@@ -412,6 +410,7 @@ rewrite <- Zabs_eq_opp; auto with float zarith.
 apply pNormal_absolu_min with (b := b); auto.
 intros H'4; Contradict H'2; rewrite H'4; ring.
 apply Zpred_Zopp_Zs; auto.
+nia.
 Qed.
  
 Theorem FSuccNormNegNormMin :
@@ -827,16 +826,11 @@ rewrite Z.mul_1_r; auto.
 unfold pPred in |- *;
  rewrite (PosNormMin radix) with (precision := precision); 
  auto with zarith; rewrite H'1.
-rewrite Zopp_mult_distr_l_reverse.
-rewrite (Zmult_comm radix).
-apply Zopp_Zpred_Zs.
 unfold Fshift in |- *; simpl in |- *.
 replace (Zpos (P_of_succ_nat (Zabs_nat (Fexp q - Fexp p))))
  with (Zsucc (Fexp q - Fexp p)).
 unfold Zsucc, Zpred in |- *; ring.
 rewrite <- (inj_abs (Fexp q - Fexp p)); auto with zarith.
-rewrite <- inj_S; simpl in |- *; auto.
-rewrite inj_abs; auto with zarith.
 rewrite FSuccSimpl4; auto.
 intros H'2 H'3.
 replace p with (Fshift radix (Zabs_nat (Fexp q - Fexp p)) q).

@@ -247,7 +247,6 @@ Theorem MSB_shift :
  forall (x : float) (n : nat), ~ is_Fzero x -> MSB x = MSB (Fshift radix n x).
 intros; unfold MSB, Fshift, Fdigit in |- *; simpl in |- *.
 rewrite digitAdd; auto with zarith.
-rewrite inj_plus; unfold Zpred in |- *; ring.
 Qed.
  
 Theorem MSB_comp :

@@ -332,7 +332,6 @@ change
    Zpred precision) in |- *.
 rewrite FnormalPrecision with (precision := precision) (4 := C2);
  auto with zarith arith.
-apply inj_pred; auto with arith.
 change (Fabs (Fnormalize radix b precision q) < powerRZ radix (Fexp p))%R
  in |- *.
 rewrite (Fabs_correct radix); auto; rewrite (FnormalizeCorrect radix); auto.
