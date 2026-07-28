@@ -86,7 +86,7 @@ try (rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith).
 try (rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith).
 rewrite Zabs_Zopp.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
-rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
+first [ solve [ rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith ] | idtac ].
 intros n' Hn'; case m; simpl in |- *; auto.
 exists 0%Z; repeat split; simpl in |- *; auto with zarith.
 intros m'; generalize (Pdiv_correct m' n'); case (Pdiv m' n'); simpl in |- *;
@@ -98,12 +98,12 @@ rewrite H1.
 rewrite inj_plus; rewrite inj_mult.
 rewrite <- (inject_nat_convert (Zpos n') n'); auto.
 repeat rewrite inj_oZ1; auto with zarith.
-ring.
+first [ solve [ ring ] | idtac ].
 replace (Zneg n') with (- Zpos n')%Z; [ idtac | simpl in |- *; auto ].
 rewrite Zmult_opp_opp.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
 rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
-rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith.
+first [ solve [ rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith ] | idtac ].
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
 rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
 intros m'; generalize (Pdiv_correct m' n'); case (Pdiv m' n'); simpl in |- *;
@@ -116,15 +116,15 @@ rewrite H1.
 rewrite inj_plus; rewrite inj_mult.
 rewrite <- (inject_nat_convert (Zpos n') n'); auto.
 repeat rewrite inj_oZ1; auto with zarith.
-ring.
+first [ solve [ ring ] | idtac ].
 replace (Zneg n') with (- Zpos n')%Z; [ idtac | simpl in |- *; auto ].
 rewrite <- Zopp_mult_distr_r; rewrite Zabs_Zopp.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
-rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith.
-rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
+first [ solve [ rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith ] | idtac ].
+first [ solve [ rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith ] | idtac ].
 rewrite Zabs_Zopp.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
-rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
+all: rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
 Qed.
  
 Theorem ZquotientPos :
@@ -164,10 +164,10 @@ Contradict Hz4.
 replace (Zabs m) with (1 * Zabs m)%Z; [ idtac | ring ].
 apply Zle_not_lt; rewrite H2.
 rewrite Zabs_Zmult; apply Zle_Zmult_comp_r; auto with zarith.
-generalize H3; case (z1 - Zquotient n m)%Z;
+first [ solve [ generalize H3; case (z1 - Zquotient n m)%Z;
  try (intros H1; case H1; auto; fail); simpl in |- *; 
  intros p; case p; simpl in |- *; auto; intros; red in |- *; 
- simpl in |- *; auto; red in |- *; intros; discriminate.
+ simpl in |- *; auto; red in |- *; intros; discriminate ] | idtac ].
 rewrite Zmult_minus_distr_r; rewrite (Zmult_comm z1); rewrite <- Hz1;
  (pattern n at 1 in |- *; rewrite Hz2); ring.
 Qed.
@@ -292,19 +292,19 @@ case (Zquotient m n); simpl in |- *; auto; intros p; case p;
 apply Zlt_mult_simpl_l with (c := Zabs n); auto with zarith.
 case (Zle_lt_or_eq 0 (Zabs n)); auto with zarith.
 intros H3; case H'; auto.
-generalize H3; case n; simpl in |- *; auto; intros; discriminate.
-rewrite <- Zabs_Zmult; rewrite (Zmult_comm n).
+first [ solve [ generalize H3; case n; simpl in |- *; auto; intros; discriminate ] | idtac ].
+first [ solve [ rewrite <- Zabs_Zmult; rewrite (Zmult_comm n) ] | idtac ].
 replace (Zabs n * 1)%Z with (Zabs n); [ idtac | ring ].
-apply Zle_lt_trans with (1 := H1).
-apply Zlt_mult_simpl_l with (c := (1 + 1)%Z); auto with zarith.
+first [ solve [ apply Zle_lt_trans with (1 := H1) ] | idtac ].
+first [ solve [ apply Zlt_mult_simpl_l with (c := (1 + 1)%Z); auto with zarith ] | idtac ].
 replace ((1 + 1) * Zabs m)%Z with (Zabs (m + m)).
 replace ((1 + 1) * Zabs n)%Z with (Zabs n + Zabs n)%Z; [ idtac | ring ].
-pattern m at 1 in |- *; rewrite H'0; rewrite H0; rewrite H.
+first [ solve [ pattern m at 1 in |- *; rewrite H'0; rewrite H0; rewrite H ] | idtac ].
 replace (- Zquotient m n * n + r + (Zquotient m n * n + z))%Z with (r + z)%Z;
  [ idtac | ring ].
-apply Zle_lt_trans with (Zabs r + Zabs z)%Z; auto with zarith.
-rewrite <- (Zabs_eq (1 + 1)); auto with zarith.
-rewrite <- Zabs_Zmult; apply f_equal with (f := Zabs); auto with zarith.
+first [ solve [ apply Zle_lt_trans with (Zabs r + Zabs z)%Z; auto with zarith ] | idtac ].
+first [ solve [ rewrite <- (Zabs_eq (1 + 1)); auto with zarith ] | idtac ].
+first [ solve [ rewrite <- Zabs_Zmult; apply f_equal with (f := Zabs); auto with zarith ] | idtac ].
 Contradict H'1; apply Zlt_not_le.
 pattern m at 1 in |- *; rewrite H0.
 apply Zle_lt_trans with (Zabs (Zquotient m n * n) + Zabs z)%Z;
@@ -315,6 +315,7 @@ repeat rewrite Zabs_Zmult.
 replace (Zabs (Zquotient m n) * Zabs n + Zabs n)%Z with
  (Zsucc (Zabs (Zquotient m n)) * Zabs n)%Z;
  [ auto with zarith | unfold Zsucc in |- *; ring ].
+all: (rewrite Z.add_diag, Z.abs_mul; reflexivity).
 Qed.
  
 Theorem ZquotientZopp :
@@ -353,10 +354,11 @@ replace (Zabs (Zquotient m q) * Zabs q + Zabs q)%Z with
  [ idtac | unfold Zsucc in |- *; ring ].
 cut (0 < Zabs q)%Z; auto with zarith.
 case (Zle_lt_or_eq 0 (Zabs q)); auto with zarith.
-intros H'6; case Z1; auto.
-generalize H'6; case q; simpl in |- *; auto; intros; discriminate.
+first [ solve [ intros H'6; case Z1; auto ] | idtac ].
+first [ solve [ generalize H'6; case q; simpl in |- *; auto; intros; discriminate ] | idtac ].
 case (Zabs_eq_case _ _ Z0); intros Z1; rewrite Z1; auto with zarith.
 rewrite ZquotientZopp; rewrite Zabs_Zopp; auto with zarith.
+all: (intros HQ; replace q with 0%Z by (destruct q; simpl in HQ; congruence); destruct n; destruct m; simpl; auto with zarith).
 Qed.
  
 Theorem NotDividesDigit :
@@ -373,8 +375,8 @@ pattern (Zpower_nat r (digit r v)) at 1 in |- *;
  replace (Zpower_nat r (digit r v)) with (Zpower_nat r (digit r v) * 1)%Z;
  [ idtac | ring ].
 rewrite (fun x y => Zabs_eq (Zpower_nat x y)); auto with zarith.
-apply Zle_Zmult_comp_l; auto with zarith.
-generalize Z1; case q; simpl in |- *; try (intros H1; case H1; auto; fail);
+all: apply Zle_Zmult_comp_l; auto with zarith.
+all: generalize Z1; case q; simpl in |- *; try (intros H1; case H1; auto; fail);
  intros p;
  (case p; unfold Zle in |- *; simpl in |- *; intros; red in |- *; intros;
    discriminate).
@@ -401,12 +403,12 @@ rewrite Z2; unfold Zquotient in |- *; case (m * p)%Z; case m; simpl in |- *;
 case (ZquotientProp m n); auto; intros r (H1, (H2, H3)).
 apply sym_equal; apply ZquotientUnique with (r := (r * p)%Z);
  auto with zarith.
-pattern m at 1 in |- *; rewrite H1; ring.
+first [ solve [ pattern m at 1 in |- *; rewrite H1; ring ] | idtac ].
 rewrite Zmult_assoc.
 repeat rewrite (fun x => Zabs_Zmult x p); auto with zarith.
 repeat rewrite Zabs_Zmult; auto with zarith.
 apply Zmult_gt_0_lt_compat_r; auto with zarith.
-apply Zlt_gt; generalize Z1; case p; simpl in |- *;
+all: apply Zlt_gt; generalize Z1; case p; simpl in |- *;
  try (intros H4; case H4; auto; fail); unfold Zlt in |- *; 
  simpl in |- *; auto; intros; red in |- *; intros; 
  discriminate.
