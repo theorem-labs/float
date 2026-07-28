@@ -6,7 +6,7 @@
                                                                              
   *****************************************************************************
   Definition of an exponential function over relative numbers *)
-Require Export Omega.
+Require Export Lia.
 Require Export Digit.
 (* We have already an exponential over natural number,
    we prove some basic properties for this function *)
@@ -203,8 +203,8 @@ Hint Resolve powerRZ_O powerRZ_1 powerRZ_NOR powerRZ_add: real.
 Theorem powerRZ_Zopp :
  forall (e : R) (z : Z), e <> 0%R -> powerRZ e (- z) = (/ powerRZ e z)%R.
 intros e z H; case z; simpl in |- *; auto with real.
-intros p; apply sym_eq; apply Rinv_involutive.
-apply pow_nonzero; auto.
+all: intros p; apply sym_eq; apply Rinv_involutive.
+all: apply pow_nonzero; auto.
 Qed.
  
 Theorem powerRZ_Zs :

@@ -9,7 +9,7 @@
    Module Float.v 				   	
    Inspired by the Diadic of Patrick Loiseleur
   *******************************************************)
-Require Export Omega.
+Require Export Lia.
 Require Export Compare.
 Require Export Rpow.
 Section definitions.
@@ -252,11 +252,11 @@ Theorem FshiftAdd :
 intros n m p; case p; unfold Fshift in |- *; simpl in |- *.
 intros Fnum1 Fexp1; apply floatEq; simpl in |- *; auto with zarith.
 rewrite Zpower_nat_is_exp; auto with zarith.
-rewrite (Zmult_comm (Zpower_nat radix n)); auto with zarith.
-rewrite <- (Zminus_plus_simpl_r (Fexp1 - m) n m).
-replace (Fexp1 - m + m)%Z with Fexp1; auto with zarith.
-replace (Z_of_nat (n + m)) with (n + m)%Z; auto with zarith arith.
-rewrite <- inj_plus; auto.
+all: rewrite (Zmult_comm (Zpower_nat radix n)); auto with zarith.
+all: rewrite <- (Zminus_plus_simpl_r (Fexp1 - m) n m).
+all: replace (Fexp1 - m + m)%Z with Fexp1; auto with zarith.
+all: replace (Z_of_nat (n + m)) with (n + m)%Z; auto with zarith arith.
+all: rewrite <- inj_plus; auto.
 Qed.
  
 Theorem ReqGivesEqwithSameExp :
@@ -277,8 +277,8 @@ case (Zmin_or (Fexp p) (Fexp q)); intros H'; rewrite H'; auto with zarith.
 rewrite inj_abs; auto.
 apply Zplus_le_reg_l with (p := Zmin (Fexp p) (Fexp q)); auto with zarith.
 generalize (Zle_min_r (Fexp p) (Fexp q)); auto with zarith.
-rewrite inj_abs; auto.
-apply Zplus_le_reg_l with (p := Zmin (Fexp p) (Fexp q)); auto with zarith.
+all: rewrite inj_abs; auto.
+all: apply Zplus_le_reg_l with (p := Zmin (Fexp p) (Fexp q)); auto with zarith.
 Qed.
  
 Theorem FdigitEq :
@@ -297,7 +297,7 @@ rewrite FshiftCorrectInv; auto.
 rewrite <- H'1.
 red in |- *; intros H'2.
 absurd (0%Z = (Fexp y - Fexp x)%Z); auto with zarith arith.
-rewrite <- (inj_abs (Fexp y - Fexp x)); auto with zarith.
+try (rewrite <- (inj_abs (Fexp y - Fexp x)); auto with zarith).
 apply Zlt_le_weak; auto.
 apply FshiftFdigit; auto.
 apply sameExpEq; auto.
@@ -308,7 +308,7 @@ rewrite FshiftCorrectInv; auto.
 rewrite <- H'1.
 red in |- *; intros H'2.
 absurd (0%Z = (Fexp x - Fexp y)%Z); auto with zarith arith.
-rewrite <- (inj_abs (Fexp x - Fexp y)); auto with zarith.
+try (rewrite <- (inj_abs (Fexp x - Fexp y)); auto with zarith).
 apply Zlt_le_weak; auto.
 apply FshiftFdigit; auto.
 Qed.

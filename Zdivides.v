@@ -6,7 +6,7 @@
                                                                              
   *****************************************************************************
   Definition of the quotient and divisibility for natural and relative numbers*)
-Require Export Omega.
+Require Export Lia.
 Require Export Paux.
  
 Definition oZ1 (x : Option positive) :=
@@ -66,7 +66,7 @@ rewrite inj_plus; rewrite inj_mult.
 rewrite <- (inject_nat_convert (Zpos n') n'); auto.
 repeat rewrite inj_oZ1; auto.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
-rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith.
+try (rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith).
 rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
 rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
@@ -77,13 +77,13 @@ replace (Zneg m') with (- Zpos m')%Z; [ idtac | simpl in |- *; auto ].
 rewrite <- (inject_nat_convert (Zpos m') m'); auto.
 rewrite H1.
 rewrite inj_plus; rewrite inj_mult.
-rewrite <- (inject_nat_convert (Zpos n') n'); auto.
+try (rewrite <- (inject_nat_convert (Zpos n') n'); auto).
 repeat rewrite inj_oZ1; auto with zarith.
-ring.
+try (ring).
 rewrite <- Zopp_mult_distr_l; rewrite Zabs_Zopp.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
-rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith.
-rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.
+try (rewrite <- (inject_nat_convert (Zpos m') m'); auto with zarith).
+try (rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith).
 rewrite Zabs_Zopp.
 rewrite inj_oZ1; rewrite Zabs_eq; auto with zarith.
 rewrite <- (inject_nat_convert (Zpos n') n'); auto with zarith.

@@ -7,7 +7,7 @@
   *****************************************************************************
   Simple functions to enumerate relative numbers *)
 Require Export Faux.
-Require Export Omega.
+Require Export Lia.
 Require Export List.
 (* 
    Returns the list of relative numbers from z to z+n *)
@@ -29,8 +29,8 @@ apply Zle_antisym; auto.
 intros n H' p q H'0 H'1; case (Zle_lt_or_eq _ _ H'0); intros H'2.
 simpl in |- *; right.
 apply H'; auto with zarith.
-rewrite Zplus_succ_comm.
-rewrite <- inj_S; auto.
+try (rewrite Zplus_succ_comm).
+try (rewrite <- inj_S; auto).
 simpl in |- *; auto.
 Qed.
  
@@ -73,7 +73,7 @@ intros p0 H'1; absurd (p <= q)%Z; auto.
 apply Zlt_not_le; auto.
 apply Zlt_O_minus_lt; auto.
 replace (p - q)%Z with (- (q - p))%Z; auto with zarith.
-rewrite H'1; simpl in |- *; auto with zarith.
+try (rewrite H'1; simpl in |- *; auto with zarith).
 unfold Zlt in |- *; simpl in |- *; auto.
 apply Zle_trans with (m := r); auto.
 Qed.

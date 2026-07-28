@@ -6,13 +6,142 @@
                                                                              
   *****************************************************************************
   Auxillary properties about natural numbers, relative numbers and reals *)
-Require Export Min.
 Require Export Arith.
+
+(* The per-operation compatibility files Coq.Arith.{Plus,Minus,Mult,Le,Lt,Gt,Min}
+   have been removed from the standard library, and so have the flat Zxxx names
+   of ZArith.  The lemmas below used to be provided by them; they are restated
+   here in terms of their Nat.* / Z.* successors so that the development below is
+   unchanged.  Everything in this development goes through Faux, so this is the
+   single place where the compatibility layer is needed. *)
+
+Lemma plus_comm : forall n m : nat, n + m = m + n.
+Proof Nat.add_comm.
+
+Lemma mult_comm : forall n m : nat, n * m = m * n.
+Proof Nat.mul_comm.
+
+Lemma plus_assoc_reverse : forall n m p : nat, n + m + p = n + (m + p).
+Proof (fun n m p => eq_sym (Nat.add_assoc n m p)).
+
+Lemma mult_assoc_reverse : forall n m p : nat, n * m * p = n * (m * p).
+Proof (fun n m p => eq_sym (Nat.mul_assoc n m p)).
+
+Lemma mult_plus_distr_r : forall n m p : nat, (n + m) * p = n * p + m * p.
+Proof Nat.mul_add_distr_r.
+
+Lemma minus_n_n : forall n : nat, 0 = n - n.
+Proof (fun n => eq_sym (Nat.sub_diag n)).
+
+Lemma minus_Sn_m : forall n m : nat, m <= n -> S (n - m) = S n - m.
+Proof (fun n m H => eq_sym (Nat.sub_succ_l m n H)).
+
+Lemma plus_minus : forall n m p : nat, n = m + p -> p = n - m.
+Proof (fun n m p H => eq_sym (Nat.add_sub_eq_l n m p (eq_sym H))).
+
+Lemma le_plus_minus_r : forall n m : nat, n <= m -> n + (m - n) = m.
+Proof
+  (fun n m H => eq_trans (Nat.add_comm n (m - n)) (Nat.sub_add n m H)).
+
+Lemma le_plus_minus : forall n m : nat, n <= m -> m = n + (m - n).
+Proof (fun n m H => eq_sym (le_plus_minus_r n m H)).
+
+Lemma plus_le_compat :
+ forall n m p q : nat, n <= m -> p <= q -> n + p <= m + q.
+Proof Nat.add_le_mono.
+
+Lemma plus_le_lt_compat :
+ forall n m p q : nat, n <= m -> p < q -> n + p < m + q.
+Proof Nat.add_le_lt_mono.
+
+Lemma plus_le_reg_l : forall n m p : nat, p + n <= p + m -> n <= m.
+Proof (fun n m p => proj2 (Nat.add_le_mono_l n m p)).
+
+Lemma plus_lt_reg_l : forall n m p : nat, p + n < p + m -> n < m.
+Proof (fun n m p => proj2 (Nat.add_lt_mono_l n m p)).
+
+Lemma mult_S_le_reg_l : forall n m p : nat, S n * m <= S n * p -> m <= p.
+Proof
+  (fun n m p => proj2 (Nat.mul_le_mono_pos_l m p (S n) (Nat.lt_0_succ n))).
+
+Lemma le_trans : forall n m p : nat, n <= m -> m <= p -> n <= p.
+Proof Nat.le_trans.
+
+Lemma lt_le_trans : forall n m p : nat, n < m -> m <= p -> n < p.
+Proof Nat.lt_le_trans.
+
+Lemma le_lt_trans : forall n m p : nat, n <= m -> m < p -> n < p.
+Proof Nat.le_lt_trans.
+
+Lemma lt_trans : forall n m p : nat, n < m -> m < p -> n < p.
+Proof Nat.lt_trans.
+
+Lemma le_antisym : forall n m : nat, n <= m -> m <= n -> n = m.
+Proof Nat.le_antisymm.
+
+Lemma le_lt_n_Sm : forall n m : nat, n <= m -> n < S m.
+Proof (fun n m => proj2 (Nat.lt_succ_r n m)).
+
+Lemma lt_S_n : forall n m : nat, S n < S m -> n < m.
+Proof (fun n m => proj2 (Nat.succ_lt_mono n m)).
+
+Lemma le_or_lt : forall n m : nat, n <= m \/ m < n.
+Proof Nat.le_gt_cases.
+
+Lemma le_lt_or_eq : forall n m : nat, n <= m -> n < m \/ n = m.
+Proof (fun n m => proj1 (Nat.lt_eq_cases n m)).
+
+Lemma le_not_lt : forall n m : nat, n <= m -> ~ m < n.
+Proof (fun n m => proj1 (Nat.le_ngt n m)).
+
+Lemma lt_le_weak : forall n m : nat, n < m -> n <= m.
+Proof Nat.lt_le_incl.
+
+Lemma lt_not_le : forall n m : nat, n < m -> ~ m <= n.
+Proof (fun n m => proj1 (Nat.lt_nge n m)).
+
+Lemma lt_O_neq : forall n : nat, 0 < n -> 0 <> n.
+Proof (fun n H => not_eq_sym (proj2 (Nat.neq_0_lt_0 n) H)).
+
+Lemma lt_pred : forall n m : nat, S n < m -> n < pred m.
+Proof (fun n m => proj1 (Nat.lt_succ_lt_pred n m)).
+
 Require Export Reals.
 Require Export Zpower.
 Require Export ZArith.
 Require Export Zcomplements.
 Require Export sTactic.
+
+(* Flat Zxxx names removed from ZArith, and the missing right-neutrality
+   projection of Rmult_ne. *)
+
+Notation Zsucc := Z.succ (only parsing).
+Notation Zpred := Z.pred (only parsing).
+Notation Zabs_nat := Z.abs_nat (only parsing).
+Notation Zabs_eq := Z.abs_eq (only parsing).
+Notation Zle := Z.le (only parsing).
+Notation Zlt := Z.lt (only parsing).
+Notation Zle_trans := Z.le_trans (only parsing).
+Notation Zle_lt_trans := Z.le_lt_trans (only parsing).
+Notation Zlt_le_trans := Z.lt_le_trans (only parsing).
+Notation Zlt_trans := Z.lt_trans (only parsing).
+Notation Zlt_gt := Z.lt_gt (only parsing).
+Notation Zgt_lt := Z.gt_lt (only parsing).
+Notation Zle_min_l := Z.le_min_l (only parsing).
+Notation Zle_min_r := Z.le_min_r (only parsing).
+Notation Zsucc_inj := Z.succ_inj (only parsing).
+Notation Zlt_irrefl := Z.lt_irrefl (only parsing).
+Notation Zge_le := Z.ge_le (only parsing).
+Notation Z_eq_dec := Z.eq_dec (only parsing).
+Notation Zopp_involutive := Z.opp_involutive (only parsing).
+Notation Zabs := Z.abs (only parsing).
+Notation Zmin := Z.min (only parsing).
+Notation Zcompare := Z.compare (only parsing).
+Notation Ppred_succ := Pos.pred_succ (only parsing).
+
+Lemma Rmult_ne_r : forall r : R, (r * 1)%R = r.
+Proof (fun r => proj1 (Rmult_ne r)).
+
 Hint Resolve R1_neq_R0: real.
 (*Missing rule for nat *)
  
@@ -637,7 +766,7 @@ replace (Zsucc 0) with (Z_of_nat 1).
 intros H'; rewrite absolu_INR; simpl in |- *; auto.
 simpl in |- *; auto.
 intros p H'; rewrite <- Zpos_succ_morphism; simpl in |- *; auto with zarith.
-unfold nat_of_P in |- *; rewrite Pmult_nat_succ_morphism; auto.
+all: unfold nat_of_P in |- *; rewrite Pmult_nat_succ_morphism; auto.
 Qed.
 Hint Resolve Zlt_le_succ: zarith.
  
@@ -671,9 +800,9 @@ Qed.
 Theorem Zlt_absolu :
  forall (x : Z) (n : nat), Zabs_nat x < n -> (x < Z_of_nat n)%Z.
 intros x n; case x; simpl in |- *; auto with zarith.
-replace 0%Z with (Z_of_nat 0); auto with zarith.
-intros p; rewrite <- (inject_nat_convert (Zpos p) p); auto with zarith.
-case n; simpl in |- *; intros; red in |- *; simpl in |- *; auto.
+all: replace 0%Z with (Z_of_nat 0); auto with zarith.
+all: intros p; rewrite <- (inject_nat_convert (Zpos p) p); auto with zarith.
+all: case n; simpl in |- *; intros; red in |- *; simpl in |- *; auto.
 Qed.
  
 Theorem inj_pred :
@@ -687,7 +816,7 @@ Theorem Zle_abs : forall p : Z, (p <= Z_of_nat (Zabs_nat p))%Z.
 intros p; case p; simpl in |- *; auto with zarith; intros q;
  rewrite inject_nat_convert with (p := Zpos q); 
  auto with zarith.
-unfold Zle in |- *; red in |- *; intros H'2; discriminate.
+all: unfold Zle in |- *; red in |- *; intros H'2; discriminate.
 Qed.
 Hint Resolve Zle_abs: zarith.
  
@@ -820,14 +949,14 @@ intros z; case z; auto.
 simpl in |- *; auto with zarith.
 repeat rewrite Zabs_eq; auto with zarith.
 intros p; rewrite Zabs_eq_opp; auto with zarith.
-2: unfold Zsucc in |- *; replace 0%Z with (-1 + 1)%Z; auto with zarith.
-2: case p; simpl in |- *; intros; red in |- *; simpl in |- *; intros;
+all: unfold Zsucc in |- *; replace 0%Z with (-1 + 1)%Z; auto with zarith.
+all: case p; simpl in |- *; intros; red in |- *; simpl in |- *; intros;
     red in |- *; intros; discriminate.
-replace (- Zsucc (Zneg p))%Z with (Zpos p - 1)%Z.
-replace (Zsucc (Zabs (Zneg p))) with (Zpos p + 1)%Z;
+all: replace (- Zsucc (Zneg p))%Z with (Zpos p - 1)%Z.
+all: replace (Zsucc (Zabs (Zneg p))) with (Zpos p + 1)%Z;
  auto with zarith.
-unfold Zsucc in |- *; rewrite Zopp_plus_distr.
-auto with zarith.
+all: unfold Zsucc in |- *; rewrite Zopp_plus_distr.
+all: auto with zarith.
 Qed.
 Hint Resolve Zabs_Zs: zarith.
  
@@ -853,7 +982,7 @@ Theorem Zlt_mult_simpl_l :
  forall a b c : Z, (0 < c)%Z -> (c * a < c * b)%Z -> (a < b)%Z.
 intros a b0 c H H0; apply Zgt_lt.
 apply Zmult_gt_reg_r with (p := c); try apply Zlt_gt; auto with zarith.
-repeat rewrite (fun x => Zmult_comm x c); auto with zarith.
+all: repeat rewrite (fun x => Zmult_comm x c); auto with zarith.
 Qed.
 (* An equality function on Z that return a bool *)
  
@@ -951,11 +1080,11 @@ Theorem Zlt_Zabs_inv1 :
  forall z1 z2 : Z, (Zabs z1 < z2)%Z -> (- z2 < z1)%Z.
 intros z1 z2 H; case (Zle_or_lt 0 z1); intros H1.
 apply Zlt_le_trans with (- (0))%Z; auto with zarith.
-apply Zlt_Zopp; apply Zle_lt_trans with (2 := H); auto with zarith.
+try (apply Zlt_Zopp; apply Zle_lt_trans with (2 := H); auto with zarith).
 rewrite <- (Zopp_involutive z1); rewrite <- (Zabs_eq_opp z1);
  auto with zarith.
 Qed.
- 
+
 Theorem Zlt_Zabs_inv2 :
  forall z1 z2 : Z, (Zabs z1 < Zabs z2)%Z -> (z1 < Zabs z2)%Z.
 intros z1 z2; case z1; case z2; simpl in |- *; auto with zarith.
@@ -965,7 +1094,7 @@ Theorem Zle_Zabs_inv1 :
  forall z1 z2 : Z, (Zabs z1 <= z2)%Z -> (- z2 <= z1)%Z.
 intros z1 z2 H; case (Zle_or_lt 0 z1); intros H1.
 apply Zle_trans with (- (0))%Z; auto with zarith.
-apply Zle_Zopp; apply Zle_trans with (2 := H); auto with zarith.
+try (apply Zle_Zopp; apply Zle_trans with (2 := H); auto with zarith).
 rewrite <- (Zopp_involutive z1); rewrite <- (Zabs_eq_opp z1);
  auto with zarith.
 Qed.
@@ -982,9 +1111,7 @@ Theorem Zlt_Zabs_Zpred :
  (Zabs z1 < z2)%Z -> z1 <> Zpred z2 -> (Zabs (Zsucc z1) < z2)%Z.
 intros z1 z2 H H0; case (Zle_or_lt 0 z1); intros H1.
 rewrite Zabs_eq; auto with zarith.
-rewrite Zabs_eq in H; auto with zarith.
-apply Zlt_trans with (2 := H).
-repeat rewrite Zabs_eq_opp; auto with zarith.
+rewrite Zabs_eq_opp; auto with zarith.
 Qed.
  
 Theorem Zle_n_Zpred :
@@ -1052,6 +1179,6 @@ Hint Resolve lt_S_le: arith.
 Theorem Zlt_Zabs_intro :
  forall z1 z2 : Z, (- z2 < z1)%Z -> (z1 < z2)%Z -> (Zabs z1 < z2)%Z.
 intros z1 z2; case z1; case z2; simpl in |- *; auto with zarith.
-intros p p0 H H0; change (- Zneg p0 < - Zneg p)%Z in |- *;
+all: intros p p0 H H0; change (- Zneg p0 < - Zneg p)%Z in |- *;
  auto with zarith.
 Qed.

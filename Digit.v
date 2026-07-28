@@ -7,7 +7,7 @@
   *****************************************************************************
   Gives the number of digits necessary to write a number in a given base *)
 Require Export ZArithRing.
-Require Export Omega.
+Require Export Lia.
 Require Export Faux.
 Section Pdigit.
 (* n is the base *)
@@ -133,7 +133,7 @@ intros; rewrite H1; rewrite Zpower_nat_O; auto with zarith.
 intros r'; rewrite digitAux1; auto.
 intros H1; generalize (Rec (n * r)%Z); case (digitAux v (n * r) q').
 intros; rewrite Zpower_nat_O; auto with zarith.
-apply Zle_trans with (m := r); auto with zarith.
+try (apply Zle_trans with (m := r); auto with zarith).
 intros r'; rewrite digitAux1; auto.
 intros q' Rec r; generalize (Zcompare_correct r v); case (r ?= v)%Z; auto.
 intros H1; generalize (Rec (n * r)%Z); case (digitAux v (n * r) q').
@@ -141,7 +141,7 @@ intros; rewrite H1; rewrite Zpower_nat_O; auto with zarith.
 intros r'; rewrite digitAux1; auto.
 intros H1; generalize (Rec (n * r)%Z); case (digitAux v (n * r) q').
 intros; rewrite Zpower_nat_O; auto with zarith.
-apply Zle_trans with (m := r); auto with zarith.
+try (apply Zle_trans with (m := r); auto with zarith).
 intros r'; rewrite digitAux1; auto.
 Qed.
 (* digit is correct (first part) *)

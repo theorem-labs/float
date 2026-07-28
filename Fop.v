@@ -168,7 +168,7 @@ apply floatEq; simpl in |- *; auto.
 replace (Zabs_nat (Fexp2 - Fexp2)) with 0; auto with zarith arith.
 replace (Zpower_nat radix 0) with (Z_of_nat 1); simpl in |- *;
  auto with zarith arith.
-replace (Fexp2 - Fexp2)%Z with 0%Z; simpl in |- *; auto with zarith arith.
+all: replace (Fexp2 - Fexp2)%Z with 0%Z; simpl in |- *; auto with zarith arith.
 Qed.
  
 Definition Fmult (x y : float) := Float (Fnum x * Fnum y) (Fexp x + Fexp y).

@@ -22,7 +22,7 @@
                                                                              
   *****************************************************************************
   Definition of an exponential function over relative numbers *)
-Require Import Omega.
+Require Import Lia.
 Require Import Reals.
 Require Import Zpower.
 Require Import ZArith.
@@ -232,8 +232,8 @@ Theorem powerRZ_Zopp :
  forall (e : R) (z : BinInt.Z),
  e <> 0%R -> powerRZ e (- z) = (/ powerRZ e z)%R.
 intros e z H; case z; simpl in |- *; auto with real.
-intros p; apply sym_eq; apply Rinv_involutive.
-apply pow_nonzero; auto.
+all: intros p; apply sym_eq; apply Rinv_involutive.
+all: apply pow_nonzero; auto.
 Qed.
 
 Theorem powerRZ_Zs :

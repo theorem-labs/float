@@ -36,7 +36,7 @@ Theorem FnormalNotZero : forall p : float, Fnormal p -> ~ is_Fzero p.
 unfold is_Fzero in |- *; intros p H; red in |- *; intros H1.
 case H; rewrite H1.
 replace (Zabs (radix * 0)) with 0%Z; auto with zarith.
-rewrite Zmult_comm; simpl in |- *; auto.
+all: rewrite Zmult_comm; simpl in |- *; auto.
 Qed.
  
 Theorem FnormalFop : forall p : float, Fnormal p -> Fnormal (Fopp p).
@@ -44,7 +44,7 @@ intros p H; split; auto with float.
 replace (Zabs (radix * Fnum (Fopp p))) with (Zabs (radix * Fnum p));
  auto with float.
 case p; simpl in |- *; auto with zarith.
-intros Fnum1 Fexp1; rewrite <- Zopp_mult_distr_r; apply sym_equal;
+all: intros Fnum1 Fexp1; rewrite <- Zopp_mult_distr_r; apply sym_equal;
  apply Zabs_Zopp.
 Qed.
  
@@ -232,7 +232,7 @@ intros H'0; exists (Float (Zsucc (Fnum p)) (Fexp p)); split; auto with float.
 repeat split; simpl in |- *; auto with float.
 case (Zle_or_lt 0 (Fnum p)); intros H1; auto with zarith.
 rewrite Zabs_eq; auto with zarith.
-apply Zlt_trans with (Zabs (Fnum p)); auto with float zarith.
+try (apply Zlt_trans with (Zabs (Fnum p)); auto with float zarith).
 repeat rewrite Zabs_eq_opp; auto with zarith.
 intros H'0;
  exists (Float (Zpower_nat radix (pred precision)) (Zsucc (Fexp p))); 

@@ -1,1 +1,11 @@
-tags.f
+*.vo
+*.vok
+*.vos
+*.glob
+*.aux
+.*.aux
+Makefile.coq
+Makefile.coq.conf
+.Makefile.coq.d
+.lia.cache
+.nia.cache
