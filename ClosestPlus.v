@@ -81,7 +81,7 @@ apply le_IZR.
 apply (Rle_monotony_contra_exp radix) with (z := Fexp2); auto.
 case H'6; auto.
 case H'6; auto.
-intros; simpl in |- *; ring.
+all: first [ solve [ intros; simpl in |- *; ring ] | idtac ].
 replace (Fexp2 - Fexp2)%Z with 0%Z; simpl in |- *; auto with zarith.
 Qed.
  
@@ -514,6 +514,9 @@ apply
 rewrite Rinv_r; auto with real arith.
 rewrite <- powerRZ_Zs; auto with real zarith.
 rewrite <- Zsucc_pred; ring.
+all: first [ solve [ case H'; auto ] | idtac ].
+all: first [ solve [ case H'0; auto ] | idtac ].
+all: first [ solve [ case Fs; intros H1 (H2, H3); auto ] | idtac ].
 Qed.
  
 Theorem plusErrorBound1withZero :
@@ -613,8 +616,8 @@ replace (Rabs p * (radix * / (2%nat * pPred (vNum b))))%R with
  [ apply plusErrorBound1withZero | idtac ]; auto.
 rewrite (Rinv_mult_distr 2%nat (pPred (vNum b))); auto with real zarith.
 ring.
-apply NEq_IZRO; auto with real zarith.
-generalize pPredMoreThanOne; auto with zarith.
+all: apply NEq_IZRO; auto with real zarith.
+all: generalize pPredMoreThanOne; auto with zarith.
 Qed.
  
 Theorem plusExactExp :

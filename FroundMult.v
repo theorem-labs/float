@@ -91,7 +91,7 @@ rewrite Zpower_nat_Z_powerRZ; auto with zarith.
 pattern (Fnum p * Fnum q)%Z at 1 in |- *; rewrite H'5; ring.
 rewrite pGivesBound.
 rewrite <- (Zabs_eq (Zpower_nat radix precision)); auto with zarith.
-apply Zlt_Zabs_inv2; auto.
+all: first [ solve [ apply Zlt_Zabs_inv2; auto ] | idtac ].
 apply Rmult_le_reg_l with (r := powerRZ radix (Fexp p + Fexp q));
  auto with real zarith.
 repeat rewrite (Rmult_comm (powerRZ radix (Fexp p + Fexp q))); auto.
@@ -103,7 +103,7 @@ case
     (m := Zquotient (Fnum p * Fnum q) (Zpower_nat radix precision));
  auto with zarith.
 apply Zmult_le_reg_r with (p := Zpower_nat radix precision); auto with zarith.
-apply Zlt_gt; auto with zarith.
+all: first [ solve [ apply Zlt_gt; auto with zarith ] | idtac ].
 pattern (Zpower_nat radix precision) at 2 in |- *;
  rewrite <- (fun x => Zabs_eq (Zpower_nat radix x)).
 rewrite <- Zabs_Zmult.
@@ -178,7 +178,7 @@ case
     (m := Zquotient (Fnum p * Fnum q) (Zpower_nat radix precision));
  auto with zarith.
 apply Zmult_le_reg_r with (p := Zpower_nat radix precision); auto with zarith.
-apply Zlt_gt; auto with zarith.
+all: first [ solve [ apply Zlt_gt; auto with zarith ] | idtac ].
 pattern (Zpower_nat radix precision) at 2 in |- *;
  rewrite <- (fun x => Zabs_eq (Zpower_nat radix x)).
 rewrite <- Zabs_Zmult.
@@ -262,7 +262,7 @@ replace
  (Zsucc (Zquotient (Fnum p * Fnum q) (Zpower_nat radix precision)) *
   Zpower_nat radix precision - Fnum p * Fnum q)%Z; 
  auto with zarith.
-unfold Zsucc in |- *; simpl in |- *; ring.
+all: first [ solve [ unfold Zsucc in |- *; simpl in |- *; ring ] | idtac ].
 pattern (Fnum p * Fnum q)%Z at 1 in |- *; rewrite H'3; ring.
 apply le_IZR;
  apply (Rle_monotony_contra_exp radix) with (z := (Fexp p + Fexp q)%Z);
@@ -304,10 +304,10 @@ cut (Zabs (Fnum p) < Zpower_nat radix precision)%Z;
  | rewrite <- pGivesBound; case Fp ]; auto with zarith.
 case (Zle_lt_or_eq _ _ (Zle_ZERO_Zabs (Fnum q))); auto.
 intros Eq3; Contradict Eq1; replace (Fnum q) with 0%Z; auto with zarith.
-generalize Eq3; case (Fnum q); simpl in |- *; auto; intros; discriminate.
+all: first [ solve [ generalize Eq3; case (Fnum q); simpl in |- *; auto; intros; discriminate ] | idtac ].
 case (Zle_lt_or_eq _ _ (Zle_ZERO_Zabs (Fnum p))); auto.
 intros Eq3; Contradict Eq1; replace (Fnum p) with 0%Z; auto with zarith.
-generalize Eq3; case (Fnum p); simpl in |- *; auto; intros; discriminate.
+all: first [ solve [ generalize Eq3; case (Fnum p); simpl in |- *; auto; intros; discriminate ] | idtac ].
 rewrite <- Eq1; replace (Zquotient 0 (Zpower_nat radix precision)) with 0%Z;
  auto with zarith.
 apply Zle_trans with (1 := H'1); auto with zarith.

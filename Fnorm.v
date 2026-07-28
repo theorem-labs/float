@@ -231,9 +231,10 @@ apply Zle_trans with 0%Z; auto with zarith.
 intros H'0; exists (Float (Zsucc (Fnum p)) (Fexp p)); split; auto with float.
 repeat split; simpl in |- *; auto with float.
 case (Zle_or_lt 0 (Fnum p)); intros H1; auto with zarith.
-rewrite Zabs_eq; auto with zarith.
-try (apply Zlt_trans with (Zabs (Fnum p)); auto with float zarith).
-repeat rewrite Zabs_eq_opp; auto with zarith.
+first [ solve [ rewrite Zabs_eq; auto with zarith ] | idtac ].
+first [ solve [ try (apply Zlt_trans with (Zabs (Fnum p)); auto with float zarith) ] | idtac ].
+first [ solve [ repeat rewrite Zabs_eq_opp; auto with zarith ] | idtac ].
+all: first [ solve [ generalize (FboundedNum b p H'); intros Hb; rewrite (Z.abs_neq (Z.succ (Fnum p))) by lia; rewrite Z.abs_neq in Hb by lia; lia ] | idtac ].
 intros H'0;
  exists (Float (Zpower_nat radix (pred precision)) (Zsucc (Fexp p))); 
  split; auto.
@@ -308,7 +309,7 @@ Theorem FboundedMboundPos :
 intros z m H' H'0 H'1; case (Zle_lt_or_eq _ _ H'0); intros H'2.
 exists (Float m z); split; auto with zarith.
 repeat split; simpl in |- *; auto with zarith.
-rewrite Zabs_eq; auto; rewrite pGivesBound; auto.
+first [ solve [ rewrite Zabs_eq; auto; rewrite pGivesBound; auto ] | idtac ].
 case (FboundNext (Float (Zpred (Zpos (vNum b))) z)); auto with float.
 intros f' (H1, H2); exists f'; split; auto.
 rewrite H2; rewrite pGivesBound.
@@ -348,7 +349,7 @@ rewrite Zmult_comm; rewrite Zpower_nat_1; auto with float zarith.
 red in |- *; intros H1; case H.
 intros H0 H2; Contradict H2; rewrite H1.
 replace (Zabs (radix * 0)) with 0%Z; auto with zarith.
-rewrite Zmult_comm; simpl in |- *; auto.
+first [ solve [ rewrite Zmult_comm; simpl in |- *; auto ] | idtac ].
 rewrite plus_comm; simpl in |- *; auto.
 Qed.
 Hint Resolve FnormalPrecision: float.
@@ -378,12 +379,12 @@ absurd (Fnum (Fshift radix (Zabs_nat (Fexp p - Fexp q)) p) < Fnum q)%Z; auto.
 2: apply Rlt_Fexp_eq_Zlt with (radix := radix); auto with zarith.
 2: unfold FtoRradix in |- *; rewrite FshiftCorrect; auto.
 2: unfold Fshift in |- *; simpl in |- *; auto with zarith.
-2: replace (Z_of_nat (Zabs_nat (Fexp p - Fexp q))) with (Fexp p - Fexp q)%Z;
+all: replace (Z_of_nat (Zabs_nat (Fexp p - Fexp q))) with (Fexp p - Fexp q)%Z;
     auto with zarith.
-2: cut (0 < Fexp p - Fexp q)%Z; auto with zarith.
-2: case (Fexp p - Fexp q)%Z; simpl in |- *; auto with zarith.
-2: intros p0; rewrite (inject_nat_convert (Zpos p0)); auto with arith.
-2: intros p0 H'5; discriminate.
+all: cut (0 < Fexp p - Fexp q)%Z; auto with zarith.
+all: case (Fexp p - Fexp q)%Z; simpl in |- *; auto with zarith.
+all: first [ solve [ intros p0; rewrite (inject_nat_convert (Zpos p0)); auto with arith ] | idtac ].
+all: first [ solve [ intros p0 H'5; discriminate ] | idtac ].
 red in |- *; intros H'5.
 absurd
  (Fdigit radix (Fshift radix (Zabs_nat (Fexp p - Fexp q)) p) <=
@@ -394,16 +395,24 @@ replace (Fdigit radix q) with precision; auto with zarith.
 cut (0 < Fexp p - Fexp q)%Z; auto with zarith.
 case (Fexp p - Fexp q)%Z; simpl in |- *; auto with zarith.
 intros p0 H'6; generalize (convert_not_O p0); auto with zarith.
-intros p0 H'6; discriminate.
+all: first [ solve [ intros _; apply sym_equal; apply FnormalPrecision; auto ] | idtac ].
+first [ solve [ intros p0 H'6; discriminate ] | idtac ].
 apply sym_equal; auto with float.
-apply sym_equal; auto with float.
+first [ solve [ apply sym_equal; auto with float ] | idtac ].
 apply FnormalNotZero; auto with arith.
 unfold Fdigit in |- *; apply digit_monotone; auto with arith.
 repeat rewrite Zabs_eq; auto with zarith.
-apply LeR0Fnum with (radix := radix); auto with zarith.
-apply Rle_trans with (r2 := FtoRradix p); auto with real.
-apply LeR0Fnum with (radix := radix); auto with zarith.
-unfold FtoRradix in |- *; rewrite FshiftCorrect; auto.
+first [ solve [ apply LeR0Fnum with (radix := radix); auto with zarith ] | idtac ].
+first [ solve [ apply Rle_trans with (r2 := FtoRradix p); auto with real ] | idtac ].
+first [ solve [ apply LeR0Fnum with (radix := radix); auto with zarith ] | idtac ].
+first [ solve [ unfold FtoRradix in |- *; rewrite FshiftCorrect; auto ] | idtac ].
+all: first [ solve [ apply LeR0Fnum with (radix := radix); auto with zarith;
+       unfold FtoRradix in |- *; rewrite FshiftCorrect; auto with real ] | idtac ].
+all: first [ solve [ apply Rle_Fexp_eq_Zle with (radix := radix); auto with zarith;
+       [ unfold FtoRradix in |- *; rewrite FshiftCorrect; auto with real
+       | simpl in |- *; rewrite Nat2Z.inj_abs_nat; rewrite Z.abs_eq; auto with zarith ] ] | idtac ].
+all: first [ solve [ apply LeR0Fnum with (radix := radix); auto with zarith;
+       apply Rle_trans with (r2 := FtoRradix p); auto with real ] | idtac ].
 Qed.
  
 Theorem FnormalLtNeg :
@@ -624,7 +633,7 @@ case H'; replace Fnum1 with (- - Fnum1)%Z; auto with zarith.
 unfold Fopp, Fshift, Fdigit in |- *; simpl in |- *.
 replace (digit radix (- Fnum1)) with (digit radix Fnum1).
 apply floatEq; simpl in |- *; auto with zarith.
-ring.
+first [ solve [ ring ] | idtac ].
 case Fnum1; simpl in |- *; auto.
 Qed.
  
@@ -658,7 +667,7 @@ intros p H'.
 generalize (FnormalizeBounded p H').
 unfold Fnormalize in |- *; case (Z_zerop (Fnum p)); auto.
 intros H'0; right; repeat split; simpl in |- *; auto with zarith.
-rewrite Zmult_comm; simpl in |- *; red in |- *; simpl in |- *; auto.
+first [ solve [ rewrite Zmult_comm; simpl in |- *; red in |- *; simpl in |- *; auto ] | idtac ].
 intros H'1.
 case (min_or (precision - Fdigit radix p) (Zabs_nat (dExp b + Fexp p)));
  intros Min; case Min; clear Min; intros MinR MinL.
@@ -713,7 +722,7 @@ apply Zlt_gt; rewrite Zabs_eq; auto with zarith.
 apply Zmult_gt_0_lt_compat_r.
 apply Zlt_gt; rewrite Zabs_eq; auto with zarith.
 rewrite (fun x => Zabs_eq (Zpower_nat radix x)); auto with zarith.
-unfold Fdigit in |- *; apply digitMore; auto.
+first [ solve [ unfold Fdigit in |- *; apply digitMore; auto ] | idtac ].
 pattern radix at 1 in |- *; rewrite <- (Zpower_nat_1 radix).
 repeat rewrite <- Zpower_nat_is_exp; auto with zarith.
 apply Zle_trans with (Zabs (Zpower_nat radix precision)).

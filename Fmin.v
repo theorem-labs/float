@@ -38,7 +38,7 @@ intros n; repeat split; unfold boundNat in |- *; simpl in |- *;
  auto with zarith.
 apply vNumbMoreThanOne with (radix := radix) (precision := precision);
  auto with zarith.
-apply Zle_trans with 0%Z;[case (dExp b)|idtac]; auto with zarith.
+all: apply Zle_trans with 0%Z;[case (dExp b)|idtac]; auto with zarith.
 Qed.
 (* A function that returns a bounded greater than a given r *)
  
@@ -137,25 +137,18 @@ intros r; unfold mBFloat in |- *.
 replace (boundR r) with
  ((fun p : Z * Z => Float (fst p) (snd p))
     (Fnum (boundR r), Fexp (boundR r))).
+2: case (boundR r); simpl in |- *; auto.
 apply in_map with (f := fun p : Z * Z => Float (fst p) (snd p));
  auto.
 apply mProd_correct; auto.
-apply mZlist_correct; auto.
-unfold boundR, boundNat in |- *; simpl in |- *; auto with zarith.
-apply Zle_trans with (- (0))%Z; auto with zarith.
-apply Zle_Zopp; unfold pPred in |- *; apply Zle_Zpred; simpl in |- *.
-apply Zlt_trans with 1%Z; auto with zarith.
-apply vNumbMoreThanOne with (3 := pGivesBound); auto.
-unfold boundR, boundNat in |- *; simpl in |- *; auto with zarith.
-unfold pPred in |- *; apply Zle_Zpred; simpl in |- *.
-unfold boundR, boundNat in |- *; simpl in |- *; auto with zarith.
-apply vNumbMoreThanOne with (3 := pGivesBound); auto.
-apply mZlist_correct; auto.
-unfold boundR, boundNat in |- *; simpl in |- *; auto with zarith.
-apply Zle_trans with 0%Z; auto with zarith arith.
-case (dExp b); auto with zarith.
-case (boundR r); simpl in |- *; auto with zarith.
-case (boundR r); simpl in |- *; auto with zarith.
+assert (HvN : (1 < Zpos (vNum b))%Z);
+ [ apply vNumbMoreThanOne with (3 := pGivesBound); auto | idtac ].
+replace (Fnum (boundR r)) with 1%Z;
+ [ idtac | unfold boundR, boundNat in |- *; simpl in |- *; auto ].
+apply mZlist_correct; unfold pPred in |- *; lia.
+apply mZlist_correct; simpl in |- *; auto with zarith.
+all: unfold boundR, boundNat in |- *; simpl in |- *;
+ case (dExp b); simpl in |- *; auto with zarith.
 Qed.
  
 Theorem mBFadic_correct3 : forall r : R, In (Fopp (boundR r)) (mBFloat r).
@@ -163,24 +156,18 @@ intros r; unfold mBFloat in |- *.
 replace (Fopp (boundR r)) with
  ((fun p : Z * Z => Float (fst p) (snd p))
     (Fnum (Fopp (boundR r)), Fexp (Fopp (boundR r)))).
+2: case (boundR r); simpl in |- *; auto.
 apply in_map with (f := fun p : Z * Z => Float (fst p) (snd p));
  auto.
 apply mProd_correct; auto.
-apply mZlist_correct; auto.
-unfold boundR, boundNat in |- *; simpl in |- *; auto with zarith.
-replace (-1)%Z with (- Z_of_nat 1)%Z; auto with zarith.
-apply Zle_Zopp.
-unfold pPred in |- *; apply Zle_Zpred; simpl in |- *.
-apply (vNumbMoreThanOne radix) with (precision := precision);
- auto with zarith.
-unfold pPred in |- *; apply Zle_Zpred; simpl in |- *.
-red in |- *; simpl in |- *; auto.
-apply mZlist_correct; auto.
-unfold boundR, boundNat in |- *; simpl in |- *; auto with zarith.
-apply Zle_trans with 0%Z; auto with zarith.
-case (dExp b); auto with zarith.
-case (boundR r); simpl in |- *; auto with zarith.
-case (boundR r); simpl in |- *; auto with zarith.
+assert (HvN : (1 < Zpos (vNum b))%Z);
+ [ apply vNumbMoreThanOne with (3 := pGivesBound); auto | idtac ].
+replace (Fnum (Fopp (boundR r))) with (-1)%Z;
+ [ idtac | unfold boundR, boundNat in |- *; simpl in |- *; auto ].
+apply mZlist_correct; unfold pPred in |- *; lia.
+apply mZlist_correct; simpl in |- *; auto with zarith.
+all: unfold boundR, boundNat in |- *; simpl in |- *;
+ case (dExp b); simpl in |- *; auto with zarith.
 Qed.
  
 Theorem mBFadic_correct4 :
@@ -189,23 +176,18 @@ intros p; unfold mBFloat in |- *.
 replace (Float 0%nat (- dExp b)) with
  ((fun p : Z * Z => Float (fst p) (snd p))
     (Fnum (Float 0%nat (- dExp b)), Fexp (Float 0%nat (- dExp b)))).
+2: simpl in |- *; auto.
 apply in_map with (f := fun p : Z * Z => Float (fst p) (snd p));
  auto.
 apply mProd_correct; auto.
-apply mZlist_correct; auto.
-simpl in |- *; auto with zarith.
-replace 0%Z with (- (0))%Z; [ idtac | simpl in |- *; auto ].
-apply Zle_Zopp; unfold pPred in |- *; apply Zle_Zpred.
-red in |- *; simpl in |- *; auto with zarith.
-simpl in |- *; auto with zarith.
-unfold pPred in |- *; apply Zle_Zpred.
-red in |- *; simpl in |- *; auto with zarith.
-apply mZlist_correct; auto.
-simpl in |- *; auto with zarith.
-unfold boundR, boundNat in |- *; simpl in |- *; auto with zarith.
-apply Zle_trans with 0%Z; auto with zarith.
-case (dExp b); auto with zarith.
-simpl in |- *; auto with zarith.
+assert (HvN : (1 < Zpos (vNum b))%Z);
+ [ apply vNumbMoreThanOne with (3 := pGivesBound); auto | idtac ].
+replace (Fnum (Float 0%nat (- dExp b))) with 0%Z;
+ [ idtac | simpl in |- *; auto ].
+apply mZlist_correct; unfold pPred in |- *; lia.
+apply mZlist_correct; simpl in |- *; auto with zarith.
+all: unfold boundR, boundNat in |- *; simpl in |- *;
+ case (dExp b); simpl in |- *; auto with zarith.
 Qed.
  
 Theorem mBPadic_Fbounded :

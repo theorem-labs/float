@@ -396,22 +396,24 @@ unfold pPred in |- *; apply Zle_Zpred; auto with float zarith.
 intros H'2; repeat split; simpl in |- *; auto with float zarith arith.
 apply Zlt_trans with (Zabs (Fnum a)); auto with float zarith.
 repeat rewrite Zabs_eq_opp; auto with float zarith.
-rewrite Zabs_Zmult.
-rewrite (Zabs_eq radix);
- [ idtac | apply Zle_trans with 1%Z; auto with zarith ].
+all: first [ solve [ rewrite Zabs_Zmult ] | idtac ].
+all: first [ solve [ rewrite (Zabs_eq radix);
+ [ idtac | apply Zle_trans with 1%Z; auto with zarith ] ] | idtac ].
 repeat rewrite Zabs_eq_opp; auto with float zarith.
 pattern (Zpos (vNum b)) at 1 in |- *;
  rewrite (PosNormMin radix) with (precision := precision); 
  auto with zarith.
-apply Zle_Zmult_comp_l; auto with zarith.
+all: first [ solve [ apply Zle_Zmult_comp_l; auto with zarith ] | idtac ].
 replace (- Zsucc (Fnum a))%Z with (Zpred (- Fnum a)).
 auto with float zarith.
-unfold pPred in |- *; apply Zle_Zpred.
+all: first [ solve [ unfold pPred in |- *; apply Zle_Zpred ] | idtac ].
 case (Zle_lt_or_eq (nNormMin radix precision) (- Fnum a)); auto.
 rewrite <- Zabs_eq_opp; auto with float zarith.
 apply pNormal_absolu_min with (b := b); auto.
-intros H'4; Contradict H'2; rewrite H'4; ring.
-apply Zpred_Zopp_Zs; auto.
+all: first [ solve [ intros H'4; Contradict H'2; rewrite H'4; ring ] | idtac ].
+all: first [ solve [ apply Zpred_Zopp_Zs; auto ] | idtac ].
+all: first [ solve [ intros H4; nia ] | idtac ].
+all: first [ solve [ nia ] | idtac ].
 Qed.
  
 Theorem FSuccNormNegNormMin :
@@ -827,16 +829,16 @@ rewrite Z.mul_1_r; auto.
 unfold pPred in |- *;
  rewrite (PosNormMin radix) with (precision := precision); 
  auto with zarith; rewrite H'1.
-rewrite Zopp_mult_distr_l_reverse.
-rewrite (Zmult_comm radix).
-apply Zopp_Zpred_Zs.
+all: first [ solve [ rewrite Zopp_mult_distr_l_reverse ] | idtac ].
+all: first [ solve [ rewrite (Zmult_comm radix) ] | idtac ].
+all: first [ solve [ apply Zopp_Zpred_Zs ] | idtac ].
 unfold Fshift in |- *; simpl in |- *.
 replace (Zpos (P_of_succ_nat (Zabs_nat (Fexp q - Fexp p))))
  with (Zsucc (Fexp q - Fexp p)).
 unfold Zsucc, Zpred in |- *; ring.
 rewrite <- (inj_abs (Fexp q - Fexp p)); auto with zarith.
-rewrite <- inj_S; simpl in |- *; auto.
-rewrite inj_abs; auto with zarith.
+all: first [ solve [ rewrite <- inj_S; simpl in |- *; auto ] | idtac ].
+all: first [ solve [ rewrite inj_abs; auto with zarith ] | idtac ].
 rewrite FSuccSimpl4; auto.
 intros H'2 H'3.
 replace p with (Fshift radix (Zabs_nat (Fexp q - Fexp p)) q).

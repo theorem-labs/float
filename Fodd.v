@@ -376,12 +376,12 @@ intros p H H0; case H0.
 intros z Hz; exists (Float z (Fexp p)); split; auto.
 repeat split; simpl in |- *; auto with float.
 apply Zle_lt_trans with (Zabs (Fnum p)); auto with float zarith.
-rewrite Hz; rewrite Zabs_Zmult;
+all: first [ solve [ rewrite Hz; rewrite Zabs_Zmult;
  replace (Zabs 2 * Zabs z)%Z with (Zabs z + Zabs z)%Z; 
- auto with zarith arith.
-pattern (Zabs z) at 1 in |- *; replace (Zabs z) with (0 + Zabs z)%Z;
- auto with zarith.
-rewrite (Zabs_eq 2); auto with zarith.
+ auto with zarith arith ] | idtac ].
+all: first [ solve [ pattern (Zabs z) at 1 in |- *; replace (Zabs z) with (0 + Zabs z)%Z;
+ auto with zarith ] | idtac ].
+all: first [ solve [ rewrite (Zabs_eq 2); auto with zarith ] | idtac ].
 unfold FtoRradix, FtoR in |- *; simpl in |- *.
 rewrite Hz; rewrite Rmult_IZR; simpl in |- *; ring.
 Qed.
