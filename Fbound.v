@@ -157,7 +157,7 @@ pattern (Zabs (Fnum q)) at 1 in |- *;
  replace (Zabs (Fnum q)) with (Zabs (Fnum q) * 1%nat)%Z;
  [ apply Zle_Zmult_comp_l | auto with zarith ]; auto with zarith.
 rewrite Zabs_eq; simpl in |- *; auto with zarith.
-try (simpl in |- *; ring).
+all: first [ solve [ simpl in |- *; ring ] | idtac ].
 cut (Fexp p <= Fexp q)%Z; [ intros E2 | idtac ].
 apply le_IZR; auto.
 apply (Rle_monotony_contra_exp radix) with (z := Fexp p);

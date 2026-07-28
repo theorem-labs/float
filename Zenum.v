@@ -29,8 +29,8 @@ apply Zle_antisym; auto.
 intros n H' p q H'0 H'1; case (Zle_lt_or_eq _ _ H'0); intros H'2.
 simpl in |- *; right.
 apply H'; auto with zarith.
-try (rewrite Zplus_succ_comm).
-try (rewrite <- inj_S; auto).
+all: first [ solve [ rewrite Zplus_succ_comm ] | idtac ].
+all: first [ solve [ rewrite <- inj_S; auto ] | idtac ].
 simpl in |- *; auto.
 Qed.
  
@@ -73,7 +73,7 @@ intros p0 H'1; absurd (p <= q)%Z; auto.
 apply Zlt_not_le; auto.
 apply Zlt_O_minus_lt; auto.
 replace (p - q)%Z with (- (q - p))%Z; auto with zarith.
-try (rewrite H'1; simpl in |- *; auto with zarith).
+all: first [ solve [ rewrite H'1; simpl in |- *; auto with zarith ] | idtac ].
 unfold Zlt in |- *; simpl in |- *; auto.
 apply Zle_trans with (m := r); auto.
 Qed.

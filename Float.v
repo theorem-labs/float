@@ -297,7 +297,7 @@ rewrite FshiftCorrectInv; auto.
 rewrite <- H'1.
 red in |- *; intros H'2.
 absurd (0%Z = (Fexp y - Fexp x)%Z); auto with zarith arith.
-try (rewrite <- (inj_abs (Fexp y - Fexp x)); auto with zarith).
+all: first [ solve [ rewrite <- (inj_abs (Fexp y - Fexp x)); auto with zarith ] | idtac ].
 apply Zlt_le_weak; auto.
 apply FshiftFdigit; auto.
 apply sameExpEq; auto.
@@ -308,7 +308,7 @@ rewrite FshiftCorrectInv; auto.
 rewrite <- H'1.
 red in |- *; intros H'2.
 absurd (0%Z = (Fexp x - Fexp y)%Z); auto with zarith arith.
-try (rewrite <- (inj_abs (Fexp x - Fexp y)); auto with zarith).
+all: first [ solve [ rewrite <- (inj_abs (Fexp x - Fexp y)); auto with zarith ] | idtac ].
 apply Zlt_le_weak; auto.
 apply FshiftFdigit; auto.
 Qed.

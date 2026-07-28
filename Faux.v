@@ -1080,7 +1080,7 @@ Theorem Zlt_Zabs_inv1 :
  forall z1 z2 : Z, (Zabs z1 < z2)%Z -> (- z2 < z1)%Z.
 intros z1 z2 H; case (Zle_or_lt 0 z1); intros H1.
 apply Zlt_le_trans with (- (0))%Z; auto with zarith.
-try (apply Zlt_Zopp; apply Zle_lt_trans with (2 := H); auto with zarith).
+all: first [ solve [ apply Zlt_Zopp; apply Zle_lt_trans with (2 := H); auto with zarith ] | idtac ].
 rewrite <- (Zopp_involutive z1); rewrite <- (Zabs_eq_opp z1);
  auto with zarith.
 Qed.
@@ -1094,7 +1094,7 @@ Theorem Zle_Zabs_inv1 :
  forall z1 z2 : Z, (Zabs z1 <= z2)%Z -> (- z2 <= z1)%Z.
 intros z1 z2 H; case (Zle_or_lt 0 z1); intros H1.
 apply Zle_trans with (- (0))%Z; auto with zarith.
-try (apply Zle_Zopp; apply Zle_trans with (2 := H); auto with zarith).
+all: first [ solve [ apply Zle_Zopp; apply Zle_trans with (2 := H); auto with zarith ] | idtac ].
 rewrite <- (Zopp_involutive z1); rewrite <- (Zabs_eq_opp z1);
  auto with zarith.
 Qed.
